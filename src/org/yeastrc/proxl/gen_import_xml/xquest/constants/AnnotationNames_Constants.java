@@ -6,7 +6,7 @@ public class AnnotationNames_Constants {
 	
 	//  Filterable
 	
-	public static final String ANNOTATION_NAME_FDR = "fdr";
+	public static final String ANNOTATION_NAME_FDR = "FDR";
 	public static final String ANNOTATION_DESCRIPTION_FDR = "The minimum false discovery among all predictions with this score or better.";
 	
 

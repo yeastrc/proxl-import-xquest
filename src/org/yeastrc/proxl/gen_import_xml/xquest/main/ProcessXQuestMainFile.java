@@ -12,6 +12,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.yeastrc.proxl.gen_import_xml.xquest.constants.AnnotationNames_Constants;
+import org.yeastrc.proxl.gen_import_xml.xquest.constants.DecoyInXquestProt1Prot2Constants;
 import org.yeastrc.proxl.gen_import_xml.xquest.constants.MZXML_File_Suffix_Constants;
 import org.yeastrc.proxl.gen_import_xml.xquest.constants.SearchProgramConstants;
 import org.yeastrc.proxl.gen_import_xml.xquest.constants.XquestFilenameConstants;
@@ -207,15 +208,82 @@ public class ProcessXQuestMainFile {
 			Map<String,String> searchHitContents = readNextSearchHitResult.getSearchHitContents();
 
 
-			
-    		Psm outputPsm = new Psm();
-    		
-			
 			String structure = searchHitContents.get( "structure" );
 			String topology = searchHitContents.get( "topology");
 			
 			String xquestId = searchHitContents.get( "id" );
 
+			
+			
+			//  Skip decoys
+			
+			//    Check attributes prot1 and prot2.
+			//    If all proteins in either attribute contain "decoy", skip the PSM
+			
+			String xQuestProt1 = searchHitContents.get( "prot1" );
+			String xQuestProt2 = searchHitContents.get( "prot2" );
+			
+			String[] xQuestProteins = null;
+			
+			if ( StringUtils.isNotEmpty( xQuestProt2 ) ) {
+				
+				xQuestProteins = new String[ 2 ];
+				xQuestProteins[ 1 ] = xQuestProt2;
+			
+			} else {
+				xQuestProteins = new String[ 1 ];
+			}
+			
+			xQuestProteins[ 0 ] = xQuestProt1;
+			
+			
+			boolean skipPSMforDecoys = false;
+			
+			for ( String xQuestProtein1or2 : xQuestProteins ) {
+			
+				String[] xQuestProtein1or2Split = xQuestProtein1or2.split( "," );
+
+				boolean allDecoysForProtein = true;
+				
+				for ( String xQuestProteinSingle : xQuestProtein1or2Split ) {
+					
+					if ( ! xQuestProteinSingle.contains( DecoyInXquestProt1Prot2Constants.XQUEST_DECOY_DETECT_STRING_IN_PROT1_PROT2 ) ) {
+						
+						//  Not decoy found
+						
+						allDecoysForProtein = false;
+						break;
+						
+					}
+				}
+			
+				if ( allDecoysForProtein ) {
+					
+					skipPSMforDecoys = true;
+					
+					break;
+				}
+			}
+			
+			if ( skipPSMforDecoys ) {
+				
+				//  At least one of the proteins has all proteins that contain 'decoy' so skip this PSM
+				
+
+				System.out.println( "Skipping Xquest record since at least one protein is all 'decoy'"
+						+ " for xquestId ('id'): " + xquestId
+						+ " structure: " + structure + ", topology: " + topology );
+				
+				
+				
+				continue;  ///  EARLY CONTINUE
+			}
+
+					
+			
+    		Psm outputPsm = new Psm();
+    		
+			
 
 			System.out.println( "Processing Xquest record for xquestId ('id'): " + xquestId
 					+ " structure: " + structure + ", topology: " + topology );
