@@ -17,8 +17,6 @@ import org.yeastrc.proxl_import.api.xml_dto.DecoyLabels;
 import org.yeastrc.proxl_import.api.xml_dto.Linker;
 import org.yeastrc.proxl_import.api.xml_dto.Linkers;
 import org.yeastrc.proxl_import.api.xml_dto.ProxlInput;
-import org.yeastrc.proxl_import.api.xml_dto.SearchProgramInfo;
-import org.yeastrc.proxl_import.api.xml_dto.SearchPrograms;
 import org.yeastrc.proxl_import.create_import_file_from_java_objects.main.CreateImportFileFromJavaObjectsMain;
 
 /**

@@ -23,6 +23,8 @@ import org.yeastrc.proxl.gen_import_xml.xquest.objects.ReadNextSearchHitResult;
 import org.yeastrc.proxl.gen_import_xml.xquest.readers.XquestXMLReader;
 import org.yeastrc.proxl.gen_import_xml.xquest.utils.GetProxlLinkTypeFromXquestLinkType;
 import org.yeastrc.proxl.gen_import_xml.xquest.utils.XquestImportUtils;
+import org.yeastrc.proxl_import.api.xml_dto.DescriptivePsmAnnotation;
+import org.yeastrc.proxl_import.api.xml_dto.DescriptivePsmAnnotations;
 import org.yeastrc.proxl_import.api.xml_dto.FilterablePsmAnnotation;
 import org.yeastrc.proxl_import.api.xml_dto.FilterablePsmAnnotations;
 import org.yeastrc.proxl_import.api.xml_dto.LinkType;
@@ -488,17 +490,38 @@ public class ProcessXQuestMainFile {
 				filterablePsmAnnotation.setValue( scoreBigDecimal );
 			}
 			
+
+			DescriptivePsmAnnotations descriptivePsmAnnotations = new DescriptivePsmAnnotations();
+			outputPsm.setDescriptivePsmAnnotations( descriptivePsmAnnotations );
+
+			List<DescriptivePsmAnnotation> descriptivePsmAnnotationList =
+					descriptivePsmAnnotations.getDescriptivePsmAnnotation();
 			
 			
-//			*FDR - "False Discovery Rate"
-//			*Rank - "PSM Rank for Scan"
-//			*Score - "XQuest score." - Found as score="17.78" in search_hit
-//
-//
-//			Descriptive annotation types (* means show by default):
-//			*Obs. mass - "Mass of precursor" - From "Mr_precursor" in spectrum_search
-//			*Calc. mass - "Calculated mass for PSM" - From "Mr="860.49018"" in search_hit 
+			String obsMass = spectrumSearchContents.get( "Mr_precursor" ); 
+			String calcMass = searchHitContents.get( "Mr" ); 
 			
+			//  Obs. mass
+			
+			{
+				DescriptivePsmAnnotation descriptivePsmAnnotation = new DescriptivePsmAnnotation();
+				descriptivePsmAnnotationList.add( descriptivePsmAnnotation );
+				
+				descriptivePsmAnnotation.setAnnotationName( AnnotationType_Constants.ANNOTATION_NAME_OBS_MASS );
+				descriptivePsmAnnotation.setSearchProgram( SearchProgramConstants.SEARCH_PROGRAM_NAME_XQUEST );
+				descriptivePsmAnnotation.setValue( obsMass );
+			}
+
+			//  Calc. mass
+			
+			{
+				DescriptivePsmAnnotation descriptivePsmAnnotation = new DescriptivePsmAnnotation();
+				descriptivePsmAnnotationList.add( descriptivePsmAnnotation );
+				
+				descriptivePsmAnnotation.setAnnotationName( AnnotationType_Constants.ANNOTATION_NAME_CALC_MASS );
+				descriptivePsmAnnotation.setSearchProgram( SearchProgramConstants.SEARCH_PROGRAM_NAME_XQUEST );
+				descriptivePsmAnnotation.setValue( calcMass );
+			}
 			
 			////////////////
     		
