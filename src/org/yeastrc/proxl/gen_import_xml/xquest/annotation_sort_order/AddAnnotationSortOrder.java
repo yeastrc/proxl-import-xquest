@@ -7,7 +7,7 @@ import java.util.List;
 
 
 
-import org.yeastrc.proxl.gen_import_xml.xquest.constants.AnnotationNames_Constants;
+import org.yeastrc.proxl.gen_import_xml.xquest.constants.AnnotationType_Constants;
 import org.yeastrc.proxl.gen_import_xml.xquest.constants.SearchProgramConstants;
 //import org.apache.log4j.Logger;
 import org.yeastrc.proxl_import.api.xml_dto.AnnotationSortOrder;
@@ -53,10 +53,9 @@ public class AddAnnotationSortOrder {
 				SearchAnnotation searchAnnotation = new SearchAnnotation();
 				psmAnnotationSortOrderSearchAnnotationList.add( searchAnnotation );
 
-				searchAnnotation.setAnnotationName( AnnotationNames_Constants.ANNOTATION_NAME_FDR );
+				searchAnnotation.setAnnotationName( AnnotationType_Constants.ANNOTATION_NAME_FDR );
 				searchAnnotation.setSearchProgram( SearchProgramConstants.SEARCH_PROGRAM_NAME_XQUEST );
 			}
-
 
 		}
 //		

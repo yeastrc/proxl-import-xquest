@@ -11,9 +11,10 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.yeastrc.proxl.gen_import_xml.xquest.constants.AnnotationNames_Constants;
+import org.yeastrc.proxl.gen_import_xml.xquest.constants.AnnotationType_Constants;
 import org.yeastrc.proxl.gen_import_xml.xquest.constants.DecoyInXquestProt1Prot2Constants;
 import org.yeastrc.proxl.gen_import_xml.xquest.constants.MZXML_File_Suffix_Constants;
+import org.yeastrc.proxl.gen_import_xml.xquest.constants.ScanTypeAllowedConstants;
 import org.yeastrc.proxl.gen_import_xml.xquest.constants.SearchProgramConstants;
 import org.yeastrc.proxl.gen_import_xml.xquest.constants.XquestFilenameConstants;
 import org.yeastrc.proxl.gen_import_xml.xquest.enums.XQuestLinkTypes;
@@ -207,6 +208,22 @@ public class ProcessXQuestMainFile {
 			Map<String,String> spectrumSearchContents = readNextSearchHitResult.getSpectrumSearchContents();
 			Map<String,String> searchHitContents = readNextSearchHitResult.getSearchHitContents();
 
+			
+			//  Only allow attribute 'scanType' to have value 'light_light'
+			
+			String scanTypeValue = spectrumSearchContents.get( ScanTypeAllowedConstants.SCAN_TYPE_ATTRIBUTE_NAME );
+
+			if ( ! ScanTypeAllowedConstants.SCAN_TYPE_ATTRIBUTE_ALLOWED_VALUE.equals( scanTypeValue ) ) {
+				
+				String msg = "ERROR: For attribute '" + ScanTypeAllowedConstants.SCAN_TYPE_ATTRIBUTE_NAME
+						+ "' the only supported value is '"
+						+ ScanTypeAllowedConstants.SCAN_TYPE_ATTRIBUTE_ALLOWED_VALUE
+						+ "'.  The value in the file is: " + scanTypeValue;
+				log.error( msg );
+				throw new ProxlGenXMLDataException( msg );
+			}
+			
+			
 
 			String structure = searchHitContents.get( "structure" );
 			String topology = searchHitContents.get( "topology");
@@ -342,11 +359,15 @@ public class ProcessXQuestMainFile {
 			
 
 			String fdrString = searchHitContents.get( "fdr" );
+			String searchHitRankString = searchHitContents.get( "search_hit_rank" );
+			String scoreString = searchHitContents.get( "score" );
 			
 			String chargeString = searchHitContents.get( "charge" );
 			
 
 			BigDecimal fdrBigDecimal = null;
+			BigDecimal searchHitRankBigDecimal = null;
+			BigDecimal scoreBigDecimal = null;
 			
 			try {
 			
@@ -362,6 +383,38 @@ public class ProcessXQuestMainFile {
 				
     			continue;  //  !!!!!!!!!!!!!!  EARLY CONTINUE to next entry of loop
 			}
+
+			try {
+			
+				searchHitRankBigDecimal = new BigDecimal( searchHitRankString );
+			
+				
+			} catch ( Exception e ) {
+				
+				String msg = "Skipping Hit, Unable to parse search_hit_rank to a big decimal.  searchHitRank: |" + searchHitRankString 
+						+ "|, xquestId: " + xquestId;
+				
+				log.error( msg, e );
+				
+    			continue;  //  !!!!!!!!!!!!!!  EARLY CONTINUE to next entry of loop
+			}
+			
+
+			try {
+			
+				scoreBigDecimal = new BigDecimal( scoreString );
+			
+				
+			} catch ( Exception e ) {
+				
+				String msg = "Skipping Hit, Unable to parse score to a big decimal.  score: |" + scoreString 
+						+ "|, xquestId: " + xquestId;
+				
+				log.error( msg, e );
+				
+    			continue;  //  !!!!!!!!!!!!!!  EARLY CONTINUE to next entry of loop
+			}
+			
 			
 			
 			try {
@@ -398,16 +451,56 @@ public class ProcessXQuestMainFile {
 			List<FilterablePsmAnnotation> filterablePsmAnnotationList =
 					filterablePsmAnnotations.getFilterablePsmAnnotation();
 			
-			//  Annotation FDR
+			////////////////
+
+			//  Annotations
+			
+			//  FDR
 			
 			{
 				FilterablePsmAnnotation filterablePsmAnnotation = new FilterablePsmAnnotation();
 				filterablePsmAnnotationList.add( filterablePsmAnnotation );
 
 				filterablePsmAnnotation.setSearchProgram( SearchProgramConstants.SEARCH_PROGRAM_NAME_XQUEST );
-				filterablePsmAnnotation.setAnnotationName( AnnotationNames_Constants.ANNOTATION_NAME_FDR );
+				filterablePsmAnnotation.setAnnotationName( AnnotationType_Constants.ANNOTATION_NAME_FDR );
 				filterablePsmAnnotation.setValue( fdrBigDecimal );
 			}
+
+			//  Rank
+			
+			{
+				FilterablePsmAnnotation filterablePsmAnnotation = new FilterablePsmAnnotation();
+				filterablePsmAnnotationList.add( filterablePsmAnnotation );
+
+				filterablePsmAnnotation.setSearchProgram( SearchProgramConstants.SEARCH_PROGRAM_NAME_XQUEST );
+				filterablePsmAnnotation.setAnnotationName( AnnotationType_Constants.ANNOTATION_NAME_RANK );
+				filterablePsmAnnotation.setValue( searchHitRankBigDecimal );
+			}
+
+			//  Score
+			
+			{
+				FilterablePsmAnnotation filterablePsmAnnotation = new FilterablePsmAnnotation();
+				filterablePsmAnnotationList.add( filterablePsmAnnotation );
+
+				filterablePsmAnnotation.setSearchProgram( SearchProgramConstants.SEARCH_PROGRAM_NAME_XQUEST );
+				filterablePsmAnnotation.setAnnotationName( AnnotationType_Constants.ANNOTATION_NAME_XQUEST_SCORE );
+				filterablePsmAnnotation.setValue( scoreBigDecimal );
+			}
+			
+			
+			
+//			*FDR - "False Discovery Rate"
+//			*Rank - "PSM Rank for Scan"
+//			*Score - "XQuest score." - Found as score="17.78" in search_hit
+//
+//
+//			Descriptive annotation types (* means show by default):
+//			*Obs. mass - "Mass of precursor" - From "Mr_precursor" in spectrum_search
+//			*Calc. mass - "Calculated mass for PSM" - From "Mr="860.49018"" in search_hit 
+			
+			
+			////////////////
     		
 			xquestProcessedPSMRecordCount++;
 

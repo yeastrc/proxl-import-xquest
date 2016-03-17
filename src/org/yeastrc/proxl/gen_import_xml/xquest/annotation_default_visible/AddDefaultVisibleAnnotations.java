@@ -4,14 +4,15 @@ import java.util.List;
 
 
 
-import org.yeastrc.proxl.gen_import_xml.xquest.constants.AnnotationNames_Constants;
-import org.yeastrc.proxl.gen_import_xml.xquest.constants.SearchProgramConstants;
 //import org.apache.log4j.Logger;
+
+
+import org.yeastrc.proxl.gen_import_xml.xquest.constants.AnnotationType_Constants;
+import org.yeastrc.proxl.gen_import_xml.xquest.constants.SearchProgramConstants;
 import org.yeastrc.proxl_import.api.xml_dto.DefaultVisibleAnnotations;
 import org.yeastrc.proxl_import.api.xml_dto.SearchAnnotation;
 import org.yeastrc.proxl_import.api.xml_dto.SearchProgramInfo;
 import org.yeastrc.proxl_import.api.xml_dto.VisiblePsmAnnotations;
-import org.yeastrc.proxl_import.api.xml_dto.VisibleReportedPeptideAnnotations;
 
 /**
  * 
@@ -50,11 +51,41 @@ public class AddDefaultVisibleAnnotations {
 				SearchAnnotation searchAnnotation = new SearchAnnotation();
 				visiblePsmAnnotationsSearchAnnotationList.add( searchAnnotation );
 
-				searchAnnotation.setAnnotationName( AnnotationNames_Constants.ANNOTATION_NAME_FDR );
+				searchAnnotation.setAnnotationName( AnnotationType_Constants.ANNOTATION_NAME_FDR );
 				searchAnnotation.setSearchProgram( SearchProgramConstants.SEARCH_PROGRAM_NAME_XQUEST );
 			}
 
+			{
+				SearchAnnotation searchAnnotation = new SearchAnnotation();
+				visiblePsmAnnotationsSearchAnnotationList.add( searchAnnotation );
 
+				searchAnnotation.setAnnotationName( AnnotationType_Constants.ANNOTATION_NAME_RANK );
+				searchAnnotation.setSearchProgram( SearchProgramConstants.SEARCH_PROGRAM_NAME_XQUEST );
+			}
+
+			{
+				SearchAnnotation searchAnnotation = new SearchAnnotation();
+				visiblePsmAnnotationsSearchAnnotationList.add( searchAnnotation );
+
+				searchAnnotation.setAnnotationName( AnnotationType_Constants.ANNOTATION_NAME_XQUEST_SCORE );
+				searchAnnotation.setSearchProgram( SearchProgramConstants.SEARCH_PROGRAM_NAME_XQUEST );
+			}
+
+			{
+				SearchAnnotation searchAnnotation = new SearchAnnotation();
+				visiblePsmAnnotationsSearchAnnotationList.add( searchAnnotation );
+
+				searchAnnotation.setAnnotationName( AnnotationType_Constants.ANNOTATION_NAME_OBS_MASS );
+				searchAnnotation.setSearchProgram( SearchProgramConstants.SEARCH_PROGRAM_NAME_XQUEST );
+			}
+
+			{
+				SearchAnnotation searchAnnotation = new SearchAnnotation();
+				visiblePsmAnnotationsSearchAnnotationList.add( searchAnnotation );
+
+				searchAnnotation.setAnnotationName( AnnotationType_Constants.ANNOTATION_NAME_CALC_MASS );
+				searchAnnotation.setSearchProgram( SearchProgramConstants.SEARCH_PROGRAM_NAME_XQUEST );
+			}
 		}
 		
 //		{

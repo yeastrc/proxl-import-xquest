@@ -2,12 +2,14 @@ package org.yeastrc.proxl.gen_import_xml.xquest.search_program_annotation_type;
 
 import java.util.List;
 
+//import org.apache.log4j.Logger;
+
 import org.yeastrc.proxl.gen_import_xml.xquest.annotation_default_visible.AddDefaultVisibleAnnotations;
 import org.yeastrc.proxl.gen_import_xml.xquest.annotation_sort_order.AddAnnotationSortOrder;
-//import org.apache.log4j.Logger;
-import org.yeastrc.proxl.gen_import_xml.xquest.constants.AnnotationNames_Constants;
-import org.yeastrc.proxl.gen_import_xml.xquest.constants.DefaultFilterValueConstants;
+import org.yeastrc.proxl.gen_import_xml.xquest.constants.AnnotationType_Constants;
 import org.yeastrc.proxl.gen_import_xml.xquest.constants.SearchProgramConstants;
+import org.yeastrc.proxl_import.api.xml_dto.DescriptivePsmAnnotationType;
+import org.yeastrc.proxl_import.api.xml_dto.DescriptivePsmAnnotationTypes;
 import org.yeastrc.proxl_import.api.xml_dto.FilterDirectionType;
 import org.yeastrc.proxl_import.api.xml_dto.FilterablePsmAnnotationType;
 import org.yeastrc.proxl_import.api.xml_dto.FilterablePsmAnnotationTypes;
@@ -74,26 +76,88 @@ public class AddSearchProgramAndAnnotationTypeRecords {
 		
 		FilterablePsmAnnotationTypes filterablePsmAnnotationTypes = new FilterablePsmAnnotationTypes();
 		psmAnnotationTypes.setFilterablePsmAnnotationTypes( filterablePsmAnnotationTypes );
-//		psmAnnotationTypes.setDescriptivePsmAnnotationTypes(  );
 		
 		
 		List<FilterablePsmAnnotationType> filterablePsmAnnotationTypeList = 
 				filterablePsmAnnotationTypes.getFilterablePsmAnnotationType();
 		
 		{
+			//  FDR
+			
 			FilterablePsmAnnotationType filterablePsmAnnotationType = new FilterablePsmAnnotationType();
 			
-			filterablePsmAnnotationType.setName( AnnotationNames_Constants.ANNOTATION_NAME_FDR );
-			filterablePsmAnnotationType.setDescription( AnnotationNames_Constants.ANNOTATION_DESCRIPTION_FDR );
+			filterablePsmAnnotationType.setName( AnnotationType_Constants.ANNOTATION_NAME_FDR );
+			filterablePsmAnnotationType.setDescription( AnnotationType_Constants.ANNOTATION_DESCRIPTION_FDR );
 			
 			filterablePsmAnnotationType.setFilterDirection( FilterDirectionType.BELOW );
 			
 			filterablePsmAnnotationType.setDefaultFilter( true );
 			
-			filterablePsmAnnotationType.setDefaultFilterValue( DefaultFilterValueConstants.PSM_FDR_DEFAULT );
+			filterablePsmAnnotationType.setDefaultFilterValue( AnnotationType_Constants.PSM_FDR_DEFAULT );
 			
 			filterablePsmAnnotationTypeList.add( filterablePsmAnnotationType );
 			
+		}
+
+		{
+			//  Rank
+			
+			FilterablePsmAnnotationType filterablePsmAnnotationType = new FilterablePsmAnnotationType();
+			
+			filterablePsmAnnotationType.setName( AnnotationType_Constants.ANNOTATION_NAME_RANK );
+			filterablePsmAnnotationType.setDescription( AnnotationType_Constants.ANNOTATION_DESCRIPTION_RANK );
+			
+			filterablePsmAnnotationType.setFilterDirection( FilterDirectionType.BELOW );
+			
+			filterablePsmAnnotationType.setDefaultFilter( true );
+			
+			filterablePsmAnnotationType.setDefaultFilterValue( AnnotationType_Constants.PSM_RANK_DEFAULT );
+			
+			filterablePsmAnnotationTypeList.add( filterablePsmAnnotationType );
+			
+		}
+		{
+			// Score
+			
+			FilterablePsmAnnotationType filterablePsmAnnotationType = new FilterablePsmAnnotationType();
+			
+			filterablePsmAnnotationType.setName( AnnotationType_Constants.ANNOTATION_NAME_XQUEST_SCORE );
+			filterablePsmAnnotationType.setDescription( AnnotationType_Constants.ANNOTATION_DESCRIPTION_XQUEST_SCORE );
+			
+			filterablePsmAnnotationType.setFilterDirection( FilterDirectionType.ABOVE );
+			
+			filterablePsmAnnotationType.setDefaultFilter( false );
+			
+			filterablePsmAnnotationTypeList.add( filterablePsmAnnotationType );
+			
+		}
+		
+		DescriptivePsmAnnotationTypes descriptivePsmAnnotationTypes = new DescriptivePsmAnnotationTypes();
+		
+		psmAnnotationTypes.setDescriptivePsmAnnotationTypes( descriptivePsmAnnotationTypes );
+		
+		List<DescriptivePsmAnnotationType> descriptivePsmAnnotationTypeList = descriptivePsmAnnotationTypes.getDescriptivePsmAnnotationType();
+
+		{
+			//  Obs. mass
+
+			DescriptivePsmAnnotationType descriptivePsmAnnotationType = new DescriptivePsmAnnotationType();
+			
+			descriptivePsmAnnotationType.setName( AnnotationType_Constants.ANNOTATION_NAME_OBS_MASS );
+			descriptivePsmAnnotationType.setDescription( AnnotationType_Constants.ANNOTATION_DESCRIPTION_OBS_MASS );
+			
+			descriptivePsmAnnotationTypeList.add( descriptivePsmAnnotationType );
+		}
+
+		{
+			//  Calc. mass
+
+			DescriptivePsmAnnotationType descriptivePsmAnnotationType = new DescriptivePsmAnnotationType();
+			
+			descriptivePsmAnnotationType.setName( AnnotationType_Constants.ANNOTATION_NAME_CALC_MASS );
+			descriptivePsmAnnotationType.setDescription( AnnotationType_Constants.ANNOTATION_DESCRIPTION_CALC_MASS );
+			
+			descriptivePsmAnnotationTypeList.add( descriptivePsmAnnotationType );
 		}
 		
 	}
