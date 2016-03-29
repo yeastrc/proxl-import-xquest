@@ -40,7 +40,7 @@ public class XQuestImporterMain {
 
 	public void doGenFile( 
 			
-			String linkerNameString,
+			List<String> linkerNamesStringsList,
 			String searchName,
 			String proteinNameDecoyPrefix,
 			
@@ -106,22 +106,18 @@ public class XQuestImporterMain {
 		
 		proxlInputRoot.setName( searchName );
 		
-		//  TODO
-		
-//		AddDefaultVisibleAnnotations.getInstance().addDefaultVisibleAnnotations( searchProgramInfo );
-//		
-//		AddAnnotationSortOrder.getInstance().addAnnotationSortOrder( searchProgramInfo );
-		
-		
 		Linkers linkers = new Linkers();
 		proxlInputRoot.setLinkers( linkers );
 
 		List<Linker> linkerList = linkers.getLinker();
 		
-		Linker linker = new Linker();
-		linkerList.add( linker );
-		
-		linker.setName( linkerNameString );
+		for ( String linkerNameString : linkerNamesStringsList ) {
+
+			Linker linker = new Linker();
+			linkerList.add( linker );
+
+			linker.setName( linkerNameString );
+		}
 
 		try {
 		

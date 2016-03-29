@@ -1,13 +1,28 @@
 package org.yeastrc.proxl.gen_import_xml.xquest.program;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 import jargs.gnu.CmdLineParser;
 import jargs.gnu.CmdLineParser.IllegalOptionValueException;
 import jargs.gnu.CmdLineParser.UnknownOptionException;
 
-import org.apache.log4j.Logger;
-import org.yeastrc.proxl.gen_import_xml.xquest.exceptions.PrintHelpOnlyException;
+
+
+
+
+//import org.apache.log4j.Logger;
+
+
+
+
+
+
+
 import org.yeastrc.proxl.gen_import_xml.xquest.main.XQuestImporterMain;
 
 
@@ -19,13 +34,19 @@ import org.yeastrc.proxl.gen_import_xml.xquest.main.XQuestImporterMain;
  */
 public class GenImportXMLFromXQuestDataProgram {
 
-	private static final Logger log = Logger.getLogger( GenImportXMLFromXQuestDataProgram.class );
+//	private static final Logger log = Logger.getLogger( GenImportXMLFromXQuestDataProgram.class );
 
 	private static final int PROGRAM_EXIT_CODE_DEFAULT_NO_SYTEM_EXIT_CALLED = 0;
-	
 
-	private static final String PROTEIN_NAME_DECOY_PREFIX_CMD_LINE_PARAM_STRING  = "protein_name_decoy_prefix";
+	private static final int PROGRAM_EXIT_CODE_INVALID_INPUT = 1;
+
+	private static final int PROGRAM_EXIT_CODE_HELP = 1;
 	
+	private static final String FOR_HELP_STRING = "For help, run without any parameters, -h, or --help";
+	
+	//  Must start with "/" since not in any Java package
+	private static final String HELP_TEXT_FILE = "/help_output_proxl_gen_import_xml_XQuest.txt";
+
 	
 	/**
 	 * @param args
@@ -40,18 +61,25 @@ public class GenImportXMLFromXQuestDataProgram {
 		
 		try {
 
-			
+
+			if ( args.length == 0 ) {
+				
+	            printHelp();
+	            
+	            System.exit( PROGRAM_EXIT_CODE_HELP );
+			}
+
 			
 			
 			CmdLineParser cmdLineParser = new CmdLineParser();
 	        
-			CmdLineParser.Option outputFilenameOpt = cmdLineParser.addStringOption( 'o', "output_file" );
+			CmdLineParser.Option outputFilenameOpt = cmdLineParser.addStringOption( 'o', "output-file" );
 			CmdLineParser.Option linkerOpt = cmdLineParser.addStringOption( 'l', "linker" );	
-			CmdLineParser.Option resultsPathOpt = cmdLineParser.addStringOption( 'r', "resultsPath" );	
+			CmdLineParser.Option resultsPathOpt = cmdLineParser.addStringOption( 'r', "results-path" );	
 
 			CmdLineParser.Option nameOpt = cmdLineParser.addStringOption( 'n', "name" );	
 			
-			CmdLineParser.Option proteinNameDecoyPrefixCommandLineOpt = cmdLineParser.addStringOption( 'Z', PROTEIN_NAME_DECOY_PREFIX_CMD_LINE_PARAM_STRING );
+			CmdLineParser.Option proteinNameDecoyPrefixCommandLineOpt = cmdLineParser.addStringOption( 'Z', "decoy-prefix" );
 			
 
 			CmdLineParser.Option helpOpt = cmdLineParser.addBooleanOption('h', "help"); 
@@ -60,29 +88,35 @@ public class GenImportXMLFromXQuestDataProgram {
 	        try { cmdLineParser.parse(args); }
 	        catch (IllegalOptionValueException e) {
 	            System.err.println(e.getMessage());
-	            
-	            
-				programExitCode = 1;
-	            throw new PrintHelpOnlyException();
-//	            System.exit( 0 );
+
+				System.err.println( "" );
+				System.err.println( FOR_HELP_STRING );
+				
+				System.exit( PROGRAM_EXIT_CODE_INVALID_INPUT );
 	        }
 	        catch (UnknownOptionException e) {
 	            System.err.println(e.getMessage());
-	            
-				programExitCode = 1;
-	            throw new PrintHelpOnlyException();
-//	            System.exit( 0 );
+
+				System.err.println( "" );
+				System.err.println( FOR_HELP_STRING );
+				
+				System.exit( PROGRAM_EXIT_CODE_INVALID_INPUT );
 	        }
 	        
 	        Boolean help = (Boolean) cmdLineParser.getOptionValue(helpOpt, Boolean.FALSE);
 	        if(help) {
-	        	
-				programExitCode = 1;
-	            throw new PrintHelpOnlyException();
+
+	            printHelp();
+	            
+	            System.exit( PROGRAM_EXIT_CODE_HELP );
 	        }
 	        
 	        String outputFilename = (String)cmdLineParser.getOptionValue( outputFilenameOpt );
-	        String linkerNameString = (String)cmdLineParser.getOptionValue( linkerOpt );
+	        
+			@SuppressWarnings("rawtypes")
+			Vector linkerNameStringsVector = cmdLineParser.getOptionValues( linkerOpt );
+
+			
 	        String resultsPath = (String)cmdLineParser.getOptionValue( resultsPathOpt );
 
 	        String searchName = (String)cmdLineParser.getOptionValue( nameOpt );
@@ -93,24 +127,31 @@ public class GenImportXMLFromXQuestDataProgram {
 			String[] remainingArgs = cmdLineParser.getRemainingArgs();
 			
 			if( remainingArgs.length > 0 ) {
-				System.err.println( "Got unexpected number of arguments.\n" );
-				printHelp();
-				programExitCode = 1;
-				throw new PrintHelpOnlyException();
+				System.err.println( "Got unexpected number of arguments." );
+
+				System.err.println( "" );
+				System.err.println( FOR_HELP_STRING );
+				
+				System.exit( PROGRAM_EXIT_CODE_INVALID_INPUT );
 			}
 
-	        if( linkerNameString == null || linkerNameString.equals( "" ) ) {
-	        	System.err.println( "Must specify a linker using -l\n" );
-	        	printHelp();
-				programExitCode = 1;
-				throw new PrintHelpOnlyException();
+	        if( linkerNameStringsVector == null || ( linkerNameStringsVector.isEmpty() ) ) {
+		        
+	        	System.err.println( "Must specify at least one linker using -l" );
+	        	System.err.println( "" );
+				System.err.println( FOR_HELP_STRING );
+				
+				System.exit( PROGRAM_EXIT_CODE_INVALID_INPUT );
 	        }
+
 	        
 	        if( resultsPath == null || resultsPath.equals( "" ) ) {
 	        	System.err.println( "Must specify a path to xquest results files using -r\n" );
-	        	printHelp();
-				programExitCode = 1;
-				throw new PrintHelpOnlyException();
+
+				System.err.println( "" );
+				System.err.println( FOR_HELP_STRING );
+				
+				System.exit( PROGRAM_EXIT_CODE_INVALID_INPUT );
 	        }
 
 	        
@@ -119,35 +160,91 @@ public class GenImportXMLFromXQuestDataProgram {
 	        if ( ! resultsPathFile.exists() ) {
 	        	
 	        	System.err.println( "The path to xquest results files using -r does not exist: " + resultsPathFile );
-	        	System.err.println( "" );
-	        	printHelp();
-				programExitCode = 1;
-				throw new PrintHelpOnlyException();
+
+				System.err.println( "" );
+				System.err.println( FOR_HELP_STRING );
+				
+				System.exit( PROGRAM_EXIT_CODE_INVALID_INPUT );
 	        }
 	        
 	        
 	        if ( ! resultsPathFile.isDirectory() ) {
 	        	
 	        	System.err.println( "The path to xquest results files using -r is not a directory: " + resultsPathFile );
-	        	System.err.println( "" );
-	        	printHelp();
-				programExitCode = 1;
-				throw new PrintHelpOnlyException();
+
+				System.err.println( "" );
+				System.err.println( FOR_HELP_STRING );
+				
+				System.exit( PROGRAM_EXIT_CODE_INVALID_INPUT );
 	        }
+	        
+	        List<String> linkerNamesStringsList = new ArrayList<>(  );
+
+	        for ( Object linkerNameStringObject : linkerNameStringsVector ) {
+	        	
+	        	if ( ! (  linkerNameStringObject instanceof String ) ) {
+
+		        	System.err.println( "Internal ERROR:  linkerNameStringObject is not a String object\n" );
+	        		System.err.println( "" );
+		        	System.err.println( FOR_HELP_STRING );
+					
+					System.exit( PROGRAM_EXIT_CODE_INVALID_INPUT );
+	        	}
+	        	
+	        	String linkerNameString = (String) linkerNameStringObject;
+
+	        	if( linkerNameString == null || linkerNameString.equals( "" ) ) {
+
+	        		System.err.println( "Internal ERROR:  linkerNameString is empty or null." );
+	        		System.err.println( "" );
+		        	System.err.println( FOR_HELP_STRING );
+					
+					System.exit( PROGRAM_EXIT_CODE_INVALID_INPUT );
+	        	}
+	        	
+	        	linkerNamesStringsList.add( linkerNameString );
+	        }
+	        
 	        
 	        
 
 	        System.out.println( "Performing Proxl Gen import XML file for parameters:" );
 	        
 	        System.out.println( "output filename: " + outputFilename );
-	        System.out.println( "linker: " + linkerNameString );
+
+	        System.out.print( "linker"  );
+	        
+	        if ( linkerNamesStringsList.size() > 1 ) {
+
+	        	System.out.print( "s"  );
+	        }
+
+	        System.out.print( ": "  );
+	        
+	        boolean firstLinkerBefore = true;
+
+	        for ( String linkerNameString : linkerNamesStringsList ) {
+	        	
+	        	if ( firstLinkerBefore ) {
+	        		
+	        		firstLinkerBefore = false;
+	        	} else {
+	        		
+	        		System.out.print( ", " ) ;
+	        	}
+	        	
+	        	System.out.print( linkerNameString );
+	        }
+	        
+	        System.out.println( "" );
+	        
 	        System.out.println( "path to xquest results files: " + resultsPathFile.getAbsolutePath() );
 	        
 	        File outputFile = new File( outputFilename );
 	        
 	        
 			XQuestImporterMain.getInstance().doGenFile( 
-					linkerNameString, 
+					linkerNamesStringsList, 
 					searchName, 
 					proteinNameDecoyPrefix, 
 					resultsPathFile, 
@@ -162,16 +259,36 @@ public class GenImportXMLFromXQuestDataProgram {
 	        System.out.println( "Completed Proxl Gen XML for Import for parameters:" );
 
 	        System.out.println( "output filename: " + outputFilename );
-	        System.out.println( "linker: " + linkerNameString );
+
+	        System.out.print( "linker"  );
+	        
+	        if ( linkerNamesStringsList.size() > 1 ) {
+
+	        	System.out.print( "s"  );
+	        }
+
+	        System.out.print( ": "  );
+	        
+	        boolean firstLinkerAfter = true;
+
+	        for ( String linkerNameString : linkerNamesStringsList ) {
+	        	
+	        	if ( firstLinkerAfter ) {
+	        		
+	        		firstLinkerAfter = false;
+	        	} else {
+	        		
+	        		System.out.print( ", " ) ;
+	        	}
+	        	
+	        	System.out.print( linkerNameString );
+	        }
+	        
+	        System.out.println( "" );
 	        System.out.println( "path to xquest results files: " + resultsPathFile.getAbsolutePath() );
 
 			successfulGenImportXMLFile = true;
 			
-		} catch ( PrintHelpOnlyException e ) {
-			
-			//  land here when only need to print the help
-			
-            printHelp();
 
 			
 		} catch ( Exception e ) {
@@ -215,9 +332,19 @@ public class GenImportXMLFromXQuestDataProgram {
 
 	private static void printHelp() throws Exception {
 		
-		String line = "Usage: <run jar script> -o output_filename -l linker -r path_to_results_files ";
-
-		System.err.println( line );
+		try( BufferedReader br = 
+				new BufferedReader( 
+						new InputStreamReader( 
+								GenImportXMLFromXQuestDataProgram.class
+								.getResourceAsStream( HELP_TEXT_FILE ) ) ) ) {
+			
+			String line = null;
+			while ( ( line = br.readLine() ) != null )
+				System.out.println( line );				
+			
+		} catch ( Exception e ) {
+			System.out.println( "Error printing help." );
+		}
 		
 				
 	}
