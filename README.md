@@ -1,4 +1,3 @@
-# proxl-import-xquest
 XQuest to ProXL XML Converter
 =====================================================
 
@@ -8,7 +7,7 @@ How To Run
 -------------
 1. Download the [latest release](https://github.com/yeastrc/proxl-import-xquest/releases).
 2. Run the program ``java -jar xquest2ProxlXML.jar`` with no arguments to see the possible parameters.
-3. Run the program, e.g., ``java -jar xquest2ProxlXML.jar -k ./kojak-output -c ./kojak.conf  -l dss  -o ./output.proxl.xml``
+3. Run the program, e.g., ``java -jar xquest2ProxlXML.jar -r ./xquest-output  -l dss  -o ./output.proxl.xml``
 
 In the above example, ``output.proxl.xml`` will be created and be suitable for import into ProXL.
 

@@ -1,18 +1,11 @@
-Usage: java -jar kojak2ProxlXML.jar -o output_filename -l linker_name -c /path/to/kojak.conf -k /path/to/kojak.data.txt \
-                                   [-N] [-f fasta_name.fasta (not full path)] [-m monolink_mass] [ -n search_name ] \
-								   [ --decoy-prefix=decoy ] [-x /path/to/percolator_file.xml ] [-x /another/percolator/file.xml ]
+Usage: java -jar xquest2ProxlXML.jar -o output_filename -l linker_name -r /path/to/xquest_results \
+                                   [ -n search_name ] [ --decoy-prefix=decoy ] 
 
 Examples:
 
-	To convert a Kojak search that has been processed by Percolator:
-	java -jar kojak2ProxlXML.jar -o search.proxl.xml -l dss -k kojak_output_file -c ./Kojak.conf -x ./percout-cross.xml -x ./percout-dimer.xml -x ./percout-loop.xml -x ./percout-single.xml
+	To convert a XQuest search 
+	java -jar xquest2ProxlXML.jar -o search.proxl.xml -l dss -r xquest_results_dir
 
-	To convert a Kojak search that has not been processed by Percolator:
-	java -jar kojak2ProxlXML.jar -o search.proxl.xml -l dss -k kojak_output_file -c ./Kojak.conf -N
-	
-	To convert a Kojak search, and override the FASTA filename and mono link mass from the conf file:
-	java -jar kojak2ProxlXML.jar -o search.proxl.xml -l dss -k kojak_output_file -c ./Kojak.conf -m 138.06223 -f yeast2016.fa ./percout-cross.xml ./percout-dimer.xml ./percout-loop.xml ./percout-single.xml
-	
 	
 Parameters:
 
