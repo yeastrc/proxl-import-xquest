@@ -17,17 +17,6 @@ Parameters:
 	                              recognized by ProXL, so that linkable positions in proteins may be
 								  displayed. Currently-supported linkers include: dss, bs3, bs2, edc
 								  
-								  -l can be repeated multiple times if multiple linkers were used.
-								  Note: Proxl associated linker masses with specific linkers in the experiment,
-								  but the Kojak parameters file does not currently support this. If multiple
-								  linkers are used, a comment must be added after the linker mass in the Kojak
-								  conf file, such as the following. The names of the linkers must match those
-								  passed in using the -l parameter.
-								  
-								  cross_link	=	1	1	18.00123	# linker:edc
-								  cross_link	=	1	1	138.0680742	# linker:dss
-								  mono_link	=	1	155.0946	# linker:dss
-			  
 	-n (--name=) : [Optional] : The name displayed for this search in ProXL after uploading (can be changed in
 								ProXL). If not set, a default name ("Search: <search id>") is used. If the name
 								contains spaces, it must be enclosed in quotes.
