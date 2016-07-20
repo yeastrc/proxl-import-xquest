@@ -1,5 +1,6 @@
 package org.yeastrc.proxl.gen_import_xml.xquest.objects;
 
+import java.io.File;
 import java.util.List;
 
 import org.yeastrc.proxl_import.api.xml_dto.ConfigurationFile;
@@ -13,6 +14,8 @@ public class XquestDefsFileContents {
 	
 
 	private String fastaFilename;
+	
+	private File fastaFile;
 
 
 	private List<StaticModification> xquestStaticMods;
@@ -49,6 +52,16 @@ public class XquestDefsFileContents {
 	public void setXquestDefsConfigurationFile(
 			ConfigurationFile xquestDefsConfigurationFile) {
 		this.xquestDefsConfigurationFile = xquestDefsConfigurationFile;
+	}
+
+
+	public File getFastaFile() {
+		return fastaFile;
+	}
+
+
+	public void setFastaFile(File fastaFile) {
+		this.fastaFile = fastaFile;
 	} 
 	
 

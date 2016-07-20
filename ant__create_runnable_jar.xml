@@ -20,25 +20,55 @@
 	
 	
     <target name="create_run_jar"  depends="compile">
-    	
-		<path id="build.classpath">
+
+    	<!--  Build a classpath for the jar in jar loader -->
+    		
+		<path id="lib_dir_jars">
 		  <fileset dir="lib">
 		    <include name="**/*.jar" />
 		  </fileset>
 		</path>
 
 		<!-- convert classpath to a flat list/string for use in manifest task -->
-		<pathconvert property="jars.classpath" pathsep=" ">
-		    <path refid="build.classpath" />
+		<pathconvert property="lib_dir_jars.classpath" pathsep=" ">
+		    <path refid="lib_dir_jars" />
+		    <flattenmapper />
+		</pathconvert>
+
+		<path id="lib_proxl_jars_dir">
+		  <fileset dir="lib_proxl_jars">
+		    <include name="**/*.jar" />
+		  </fileset>
+		</path>
+
+		<!-- convert classpath to a flat list/string for use in manifest task -->
+		<pathconvert property="lib_proxl_jars_dir.classpath" pathsep=" ">
+		    <path refid="lib_proxl_jars_dir" />
+		    <flattenmapper />
+		</pathconvert>
+
+
+		<path id="lib_yeastrc_jars_dir">
+		  <fileset dir="lib_yeastrc_jars">
+		    <include name="**/*.jar" />
+		  </fileset>
+		</path>
+
+		<!-- convert classpath to a flat list/string for use in manifest task -->
+		<pathconvert property="lib_yeastrc_jars.classpath" pathsep=" ">
+		    <path refid="lib_yeastrc_jars_dir" />
 		    <flattenmapper />
 		</pathconvert>
 
     	
-    	<property name="final.classpath" value="./  ${jars.classpath}"/>
     	
+    	<property name="final.classpath" 
+    		value="./ ${lib_dir_jars.classpath} ${lib_proxl_jars_dir.classpath} ${lib_yeastrc_jars.classpath}"/>
+    	
+    	
+    	<!--  classpath for the jar in jar loader -->
     	
 		<echo >Classpath for runnable jar ${final.classpath}</echo>
-    	
     	
     	
     	
@@ -95,6 +125,12 @@
 	<!-- classpath  -->
     <path id="compile.classpath">
     	<fileset dir="lib">
+        	<include name="**/*.jar"/>
+      	</fileset>
+    	<fileset dir="lib_proxl_jars">
+        	<include name="**/*.jar"/>
+      	</fileset>
+    	<fileset dir="lib_yeastrc_jars">
         	<include name="**/*.jar"/>
       	</fileset>
     </path>

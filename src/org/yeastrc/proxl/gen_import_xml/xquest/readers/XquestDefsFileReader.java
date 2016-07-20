@@ -161,6 +161,8 @@ public class XquestDefsFileReader {
 			
 			File fastaFileObj = new File( fastaFilenamePossiblyWithPath );
 			
+			xquestDefsFileContents.setFastaFile( fastaFileObj );
+			
 			xquestDefsFileContents.setFastaFilename( fastaFileObj.getName() );
 			
 			

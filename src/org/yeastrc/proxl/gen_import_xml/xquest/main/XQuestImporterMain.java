@@ -1,10 +1,14 @@
 package org.yeastrc.proxl.gen_import_xml.xquest.main;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.yeastrc.proxl.gen_import_xml.xquest.exceptions.ProxlGenXMLDataException;
+import org.yeastrc.proxl.gen_import_xml.xquest.fasta.AddProteinsFromFASTAFileUsingPeptideSequence;
 import org.yeastrc.proxl.gen_import_xml.xquest.objects.XquestDefsFileContents;
 import org.yeastrc.proxl.gen_import_xml.xquest.objects.XquestXprophDefsFileContents;
 import org.yeastrc.proxl.gen_import_xml.xquest.readers.XquestDefsFileReader;
@@ -83,6 +87,16 @@ public class XQuestImporterMain {
 		.addSearchProgramAndAnnotationTypeRecords( proxlInputRoot, xquestVersion );
 		
 		
+		File fastaFileObj = xquestDefsFileContents.getFastaFile();
+		
+		if ( ! fastaFileObj.exists() ) {
+			
+			String msg = "fasta file from XQuest Defs file does not exist: " + fastaFileObj.getCanonicalPath(); 
+			System.err.println( msg );
+			throw new ProxlGenXMLDataException(msg);
+		}
+		
+		
 		String fastaFilename = xquestDefsFileContents.getFastaFilename();
 		
 		proxlInputRoot.setFastaFilename( fastaFilename );
@@ -122,6 +136,12 @@ public class XQuestImporterMain {
 		try {
 		
 			ProcessXQuestMainFile.getInstance().importXquestData( resultsPathFile, proxlInputRoot );
+			
+			Set<String> decoyIdentificationStringFromConfFileSet = new HashSet<>();
+			
+			decoyIdentificationStringFromConfFileSet.add( proteinNameDecoyPrefix );
+
+			AddProteinsFromFASTAFileUsingPeptideSequence.getInstance().addProteinsFromFASTAFile( proxlInputRoot, fastaFileObj, decoyIdentificationStringFromConfFileSet );
 			
 			try {
 			

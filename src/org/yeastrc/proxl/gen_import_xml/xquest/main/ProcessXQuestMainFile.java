@@ -6,8 +6,10 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -104,7 +106,7 @@ public class ProcessXQuestMainFile {
 	 * @param xquestDataDir
 	 * @throws Exception
 	 */
-	public void importXquestData( 
+	public Set<String> importXquestData( 
 
 			File xquestDataDir,
 			
@@ -113,6 +115,8 @@ public class ProcessXQuestMainFile {
 			) throws Exception {
 		
 
+		Set<String> proteinNameStrings = new HashSet<>();
+		
 		
 		File xquestFile = new File( xquestDataDir, XquestFilenameConstants.XQUEST_DATA_FILENAME );
 
@@ -143,6 +147,7 @@ public class ProcessXQuestMainFile {
 
 			processXquestRecords( 
 					proxlInputRoot,
+					proteinNameStrings,
 					xquestFile, 
 					xquestXMLReader );
 
@@ -154,6 +159,7 @@ public class ProcessXQuestMainFile {
 			}
 		}
 
+		return proteinNameStrings;
 		
 	}
 	
@@ -167,6 +173,7 @@ public class ProcessXQuestMainFile {
 	private void processXquestRecords(
 
 			ProxlInput proxlInputRoot,
+			Set<String> proteinNameStrings,
 			
 			File xquestFile,
 			XquestXMLReader xquestXMLReader
