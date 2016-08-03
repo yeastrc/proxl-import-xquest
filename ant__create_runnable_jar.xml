@@ -84,6 +84,8 @@
             <fileset dir="${classes}"/>
             <fileset dir="${config}"/>
             <zipfileset dir="lib" />
+        	<zipfileset dir="lib_proxl_jars" />
+        	<zipfileset dir="lib_yeastrc_jars" />
         </jar>
     </target>
 	

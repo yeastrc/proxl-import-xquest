@@ -14,7 +14,6 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.yeastrc.proxl.gen_import_xml.xquest.constants.AnnotationType_Constants;
-import org.yeastrc.proxl.gen_import_xml.xquest.constants.DecoyInXquestProt1Prot2Constants;
 import org.yeastrc.proxl.gen_import_xml.xquest.constants.MZXML_File_Suffix_Constants;
 import org.yeastrc.proxl.gen_import_xml.xquest.constants.ScanTypeAllowedConstants;
 import org.yeastrc.proxl.gen_import_xml.xquest.constants.SearchProgramConstants;
@@ -104,11 +103,16 @@ public class ProcessXQuestMainFile {
 
 	/**
 	 * @param xquestDataDir
+	 * @param proteinNameDecoyPrefix
+	 * @param proxlInputRoot
+	 * @return
 	 * @throws Exception
 	 */
 	public Set<String> importXquestData( 
 
 			File xquestDataDir,
+			
+			String proteinNameDecoyPrefix,
 			
 			ProxlInput proxlInputRoot
 			
@@ -148,6 +152,7 @@ public class ProcessXQuestMainFile {
 			processXquestRecords( 
 					proxlInputRoot,
 					proteinNameStrings,
+					proteinNameDecoyPrefix,
 					xquestFile, 
 					xquestXMLReader );
 
@@ -166,6 +171,8 @@ public class ProcessXQuestMainFile {
 	
 	/**
 	 * @param proxlInputRoot
+	 * @param proteinNameStrings
+	 * @param proteinNameDecoyPrefix
 	 * @param xquestFile
 	 * @param xquestXMLReader
 	 * @throws Exception
@@ -174,6 +181,8 @@ public class ProcessXQuestMainFile {
 
 			ProxlInput proxlInputRoot,
 			Set<String> proteinNameStrings,
+			
+			String proteinNameDecoyPrefix,
 			
 			File xquestFile,
 			XquestXMLReader xquestXMLReader
@@ -262,47 +271,54 @@ public class ProcessXQuestMainFile {
 			
 			xQuestProteins[ 0 ] = xQuestProt1;
 			
-			
-			boolean skipPSMforDecoys = false;
-			
-			for ( String xQuestProtein1or2 : xQuestProteins ) {
-			
-				String[] xQuestProtein1or2Split = xQuestProtein1or2.split( "," );
 
-				boolean allDecoysForProtein = true;
-				
-				for ( String xQuestProteinSingle : xQuestProtein1or2Split ) {
-					
-					if ( ! xQuestProteinSingle.contains( DecoyInXquestProt1Prot2Constants.XQUEST_DECOY_DETECT_STRING_IN_PROT1_PROT2 ) ) {
-						
-						//  Not decoy found
-						
-						allDecoysForProtein = false;
+			
+			if ( StringUtils.isNotEmpty( proteinNameDecoyPrefix ) ) {
+
+
+				boolean skipPSMforDecoys = false;
+
+				for ( String xQuestProtein1or2 : xQuestProteins ) {
+
+					String[] xQuestProtein1or2Split = xQuestProtein1or2.split( "," );
+
+					boolean allDecoysForProtein = true;
+
+					for ( String xQuestProteinSingle : xQuestProtein1or2Split ) {
+
+						if ( ! xQuestProteinSingle.contains( proteinNameDecoyPrefix ) ) {
+
+							//  Not decoy found
+
+							allDecoysForProtein = false;
+							break;
+
+						}
+					}
+
+					if ( allDecoysForProtein ) {
+
+						skipPSMforDecoys = true;
+
 						break;
-						
 					}
 				}
-			
-				if ( allDecoysForProtein ) {
-					
-					skipPSMforDecoys = true;
-					
-					break;
-				}
-			}
-			
-			if ( skipPSMforDecoys ) {
-				
-				//  At least one of the proteins has all proteins that contain 'decoy' so skip this PSM
-				
 
-				System.out.println( "Skipping Xquest record since at least one protein is all 'decoy'"
-						+ " for xquestId ('id'): " + xquestId
-						+ " structure: " + structure + ", topology: " + topology );
-				
-				
-				
-				continue;  ///  EARLY CONTINUE
+				if ( skipPSMforDecoys ) {
+
+					//  At least one of the proteins has all proteins that contain 'decoy' so skip this PSM
+
+
+					System.out.println( "Skipping Xquest record since at least one protein is all 'decoy'"
+							+ " for xquestId ('id'): " + xquestId
+							+ " structure: " + structure + ", topology: " + topology );
+
+
+
+					continue;  ///  EARLY CONTINUE
+				}
+
+
 			}
 
 					

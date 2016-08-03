@@ -22,5 +22,5 @@ Parameters:
 								contains spaces, it must be enclosed in quotes.
 								
 	--decoy-prefix= : [Optional] : The prefix to use to identify decoy matches based on protein names. If not
-								   set, the value for "decoy_filter" in the Kojak configuration file will be used.
+								   set, the value for "decoy_filter" in the XQuest configuration file will be used.
 								   

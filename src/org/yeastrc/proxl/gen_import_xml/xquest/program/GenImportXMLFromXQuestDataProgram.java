@@ -23,6 +23,10 @@ import jargs.gnu.CmdLineParser.UnknownOptionException;
 
 
 
+
+
+import org.apache.commons.lang3.StringUtils;
+import org.yeastrc.proxl.gen_import_xml.xquest.constants.DecoyInXquestProt1Prot2Constants;
 import org.yeastrc.proxl.gen_import_xml.xquest.main.XQuestImporterMain;
 
 
@@ -120,8 +124,23 @@ public class GenImportXMLFromXQuestDataProgram {
 	        String resultsPath = (String)cmdLineParser.getOptionValue( resultsPathOpt );
 
 	        String searchName = (String)cmdLineParser.getOptionValue( nameOpt );
+
 	        
-	        String proteinNameDecoyPrefix = (String)cmdLineParser.getOptionValue( proteinNameDecoyPrefixCommandLineOpt );
+	        //  Decoy 
+	        
+	        String proteinNameDecoyPrefixOnCommandLine = (String)cmdLineParser.getOptionValue( proteinNameDecoyPrefixCommandLineOpt );
+	        
+	        
+	        String proteinNameDecoyPrefix = DecoyInXquestProt1Prot2Constants.XQUEST_DECOY_DETECT_STRING_IN_PROT1_PROT2;
+
+	        if ( StringUtils.isNotEmpty( proteinNameDecoyPrefixOnCommandLine ) ) {
+	        	
+	        	proteinNameDecoyPrefix = proteinNameDecoyPrefixOnCommandLine;
+	        	
+	        }
+	        
+	        
+	        
 	        
 	        
 			String[] remainingArgs = cmdLineParser.getRemainingArgs();
@@ -206,7 +225,6 @@ public class GenImportXMLFromXQuestDataProgram {
 	        }
 	        
 	        
-	        
 
 	        System.out.println( "Performing Proxl Gen import XML file for parameters:" );
 	        
@@ -239,6 +257,17 @@ public class GenImportXMLFromXQuestDataProgram {
 	        System.out.println( "" );
 	        
 	        System.out.println( "path to xquest results files: " + resultsPathFile.getAbsolutePath() );
+	        
+	        if ( StringUtils.isNotEmpty( proteinNameDecoyPrefixOnCommandLine ) ) {
+	        	
+	        	System.out.println( "Decoy prefix on command line: " + proteinNameDecoyPrefixOnCommandLine );
+	        	
+	        } else {
+	        		        	
+	        	System.out.println( "No Decoy prefix on command line so using default: " + proteinNameDecoyPrefix );
+				
+	        }
+	        
 	        
 	        File outputFile = new File( outputFilename );
 	        

@@ -7,8 +7,8 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.yeastrc.proxl.gen_import_xml.xquest.builder.MatchedProteinsBuilder;
 import org.yeastrc.proxl.gen_import_xml.xquest.exceptions.ProxlGenXMLDataException;
-import org.yeastrc.proxl.gen_import_xml.xquest.fasta.AddProteinsFromFASTAFileUsingPeptideSequence;
 import org.yeastrc.proxl.gen_import_xml.xquest.objects.XquestDefsFileContents;
 import org.yeastrc.proxl.gen_import_xml.xquest.objects.XquestXprophDefsFileContents;
 import org.yeastrc.proxl.gen_import_xml.xquest.readers.XquestDefsFileReader;
@@ -97,6 +97,9 @@ public class XQuestImporterMain {
 		}
 		
 		
+		System.out.println( "FASTA file from defs file: " + fastaFileObj.getCanonicalPath() );
+		
+		
 		String fastaFilename = xquestDefsFileContents.getFastaFilename();
 		
 		proxlInputRoot.setFastaFilename( fastaFilename );
@@ -135,13 +138,16 @@ public class XQuestImporterMain {
 
 		try {
 		
-			ProcessXQuestMainFile.getInstance().importXquestData( resultsPathFile, proxlInputRoot );
+			ProcessXQuestMainFile.getInstance().importXquestData( resultsPathFile, proteinNameDecoyPrefix, proxlInputRoot );
 			
 			Set<String> decoyIdentificationStringFromConfFileSet = new HashSet<>();
 			
-			decoyIdentificationStringFromConfFileSet.add( proteinNameDecoyPrefix );
+			if ( StringUtils.isNotEmpty( proteinNameDecoyPrefix ) ) {
+			
+				decoyIdentificationStringFromConfFileSet.add( proteinNameDecoyPrefix );
+			}
 
-			AddProteinsFromFASTAFileUsingPeptideSequence.getInstance().addProteinsFromFASTAFile( proxlInputRoot, fastaFileObj, decoyIdentificationStringFromConfFileSet );
+			MatchedProteinsBuilder.getInstance().buildMatchedProteins( proxlInputRoot, fastaFileObj, decoyIdentificationStringFromConfFileSet );
 			
 			try {
 			
