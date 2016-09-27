@@ -8,11 +8,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.yeastrc.fasta.FASTAEntry;
 import org.yeastrc.fasta.FASTAHeader;
 import org.yeastrc.fasta.FASTAReader;
-import org.yeastrc.proxl.gen_import_xml.xquest.exceptions.ProxlGenXMLDataException;
 import org.yeastrc.proxl_import.api.xml_dto.MatchedProteins;
 import org.yeastrc.proxl_import.api.xml_dto.Peptide;
 import org.yeastrc.proxl_import.api.xml_dto.Peptides;
@@ -33,8 +31,6 @@ import org.yeastrc.taxonomy.main.GetTaxonomyId;
  *
  */
 public class MatchedProteinsBuilder {
-	
-	private static final Logger log = Logger.getLogger( MatchedProteinsBuilder.class );
 
 	public static MatchedProteinsBuilder getInstance() { return new MatchedProteinsBuilder(); }
 	
@@ -119,24 +115,10 @@ public class MatchedProteinsBuilder {
 			
 			for( FASTAEntry entry = fastaReader.readNext(); entry != null; entry = fastaReader.readNext() ) {
 
-				for( FASTAHeader header : entry.getHeaders() ) {
-					
-					String headerName = header.getName();
-					
-					if ( headerName == null ) {
-						
-						String msg = "FASTA header name not valid.  name is null."
-								+ " FASTA file: " + fastaFile.getCanonicalPath()
-								+ ", FASTA header line number:"
-								+ entry.getHeaderLineNumber() 
-								+ ", header line: " + header.getLine()
-								+ "";
-						log.error( msg );
-						throw new ProxlGenXMLDataException(msg);
-					}
+				if( isDecoyFastaEntry( entry, decoyIdentifiers ) )
+					continue;
 				
-					if( isDecoyName( headerName, decoyIdentifiers ) )
-						continue;
+				for( FASTAHeader header : entry.getHeaders() ) {
 					
 					if( !proteinAnnotations.containsKey( entry.getSequence() ) )
 						proteinAnnotations.put( entry.getSequence(), new HashSet<FastaProteinAnnotation>() );
@@ -167,39 +149,23 @@ public class MatchedProteinsBuilder {
 	}
 	
 	/**
-	 * Returns false if the supplied name does not contain any of the supplied decoy identifiers (case insensitve)
+	 * Return true if the supplied FASTA entry is a decoy entry. False otherwise.
+	 * An entry is considered a decoy if any of the supplied decoy identifiers are present
+	 * anywhere in the header line.
 	 * 
-	 * @param name
+	 * @param entry
 	 * @param decoyIdentifiers
 	 * @return
-	 * @throws ProxlGenXMLDataException 
 	 */
-	private boolean isDecoyName( String name, Collection<String> decoyIdentifiers ) throws ProxlGenXMLDataException {
-		
-		if ( name == null ) {
-			
-			String msg = "FASTA header name not valid.  name is null";
-			log.error( msg );
-			throw new ProxlGenXMLDataException(msg);
-		}
-		
-		
+	private boolean isDecoyFastaEntry( FASTAEntry entry, Collection<String> decoyIdentifiers ) {
+
 		for( String decoyId : decoyIdentifiers ) {
-
-			
-
-			if ( decoyId == null ) {
-				
-				String msg = "decoyId is null";
-				log.error( msg );
-				throw new ProxlGenXMLDataException(msg);
-			}
-			
-			if( name.toLowerCase().contains( decoyId.toLowerCase() ) )
+			if( entry.getHeaderLine().toLowerCase().contains( decoyId.toLowerCase() ) )
 				return true;
 		}
 		
-		return false;		
+		return false;
+		
 	}
 	
 	
