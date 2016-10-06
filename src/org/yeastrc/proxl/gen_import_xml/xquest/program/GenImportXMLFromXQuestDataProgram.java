@@ -3,6 +3,7 @@ package org.yeastrc.proxl.gen_import_xml.xquest.program;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -10,10 +11,6 @@ import java.util.Vector;
 import jargs.gnu.CmdLineParser;
 import jargs.gnu.CmdLineParser.IllegalOptionValueException;
 import jargs.gnu.CmdLineParser.UnknownOptionException;
-
-
-
-
 
 //import org.apache.log4j.Logger;
 
@@ -23,13 +20,10 @@ import jargs.gnu.CmdLineParser.UnknownOptionException;
 
 
 
-
-
 import org.apache.commons.lang3.StringUtils;
 import org.yeastrc.proxl.gen_import_xml.xquest.constants.DecoyInXquestProt1Prot2Constants;
+import org.yeastrc.proxl.gen_import_xml.xquest.constants.DefaultCutoffOnImportValuesConstants;
 import org.yeastrc.proxl.gen_import_xml.xquest.main.XQuestImporterMain;
-
-
 
 
 /**
@@ -61,6 +55,17 @@ public class GenImportXMLFromXQuestDataProgram {
 		boolean successfulGenImportXMLFile = false;
 		
 		int programExitCode = PROGRAM_EXIT_CODE_DEFAULT_NO_SYTEM_EXIT_CALLED;
+
+		String fdrCutoffOnImportString = null;
+		BigDecimal fdrCutoffOnImport = DefaultCutoffOnImportValuesConstants.FDR_VALUE_DEFAULT_CUTOFF;
+		
+		boolean skipDefaultFDRCutoffOnImport = false;
+
+		
+		String rankCutoffOnImportString = null;
+		BigDecimal rankCutoffOnImport = DefaultCutoffOnImportValuesConstants.RANK_DEFAULT_CUTOFF;
+		
+		boolean skipDefaultRankCutoffOnImport = false;
 		
 		
 		try {
@@ -84,6 +89,21 @@ public class GenImportXMLFromXQuestDataProgram {
 			CmdLineParser.Option nameOpt = cmdLineParser.addStringOption( 'n', "name" );	
 			
 			CmdLineParser.Option proteinNameDecoyPrefixCommandLineOpt = cmdLineParser.addStringOption( 'Z', "decoy-prefix" );
+			
+
+			//  'Z' is not mentioned to the user
+			CmdLineParser.Option fdrCutoffOnImportCommandLineOpt = cmdLineParser.addStringOption( 'Z', "fdr-cutoff-on-import" );
+
+			//  'Z' is not mentioned to the user
+			CmdLineParser.Option skipDefaultFDRCutoffOnImportCommandLineOpt = 
+					cmdLineParser.addBooleanOption( 'Z', "skip-default-fdr-cutoff-on-import" );
+
+			//  'Z' is not mentioned to the user
+			CmdLineParser.Option rankCutoffOnImportCommandLineOpt = cmdLineParser.addStringOption( 'Z', "rank-cutoff-on-import" );
+			
+			//  'Z' is not mentioned to the user
+			CmdLineParser.Option skipDefaultRankCutoffOnImportCommandLineOpt = 
+					cmdLineParser.addBooleanOption( 'Z', "skip-default-rank-cutoff-on-import" );
 			
 
 			CmdLineParser.Option helpOpt = cmdLineParser.addBooleanOption('h', "help"); 
@@ -139,7 +159,16 @@ public class GenImportXMLFromXQuestDataProgram {
 	        	
 	        }
 	        
-	        
+
+
+			fdrCutoffOnImportString = (String)cmdLineParser.getOptionValue( fdrCutoffOnImportCommandLineOpt );
+
+			skipDefaultFDRCutoffOnImport = (Boolean) cmdLineParser.getOptionValue( skipDefaultFDRCutoffOnImportCommandLineOpt, Boolean.FALSE);
+			
+			rankCutoffOnImportString = (String)cmdLineParser.getOptionValue( rankCutoffOnImportCommandLineOpt );
+
+			skipDefaultRankCutoffOnImport = (Boolean) cmdLineParser.getOptionValue( skipDefaultRankCutoffOnImportCommandLineOpt, Boolean.FALSE);
+
 	        
 	        
 	        
@@ -224,8 +253,79 @@ public class GenImportXMLFromXQuestDataProgram {
 	        	linkerNamesStringsList.add( linkerNameString );
 	        }
 	        
-	        
 
+			if ( StringUtils.isNotEmpty( fdrCutoffOnImportString ) ) {
+				
+				if ( skipDefaultFDRCutoffOnImport ) {
+					
+					System.err.println( "FDR cutoff on import is not valid with skip default FDR cutoff on import" );
+					System.err.println( "" );
+					System.err.println( FOR_HELP_STRING );
+
+					System.exit( PROGRAM_EXIT_CODE_INVALID_INPUT );
+				}
+
+				try {
+					
+					fdrCutoffOnImport = new BigDecimal( fdrCutoffOnImportString );
+					
+				} catch ( Exception e ) {
+				
+					System.err.println( "Entered FDR cutoff on import is not a decimal number " + fdrCutoffOnImportString );
+					System.err.println( "" );
+					System.err.println( FOR_HELP_STRING );
+
+					System.exit( PROGRAM_EXIT_CODE_INVALID_INPUT );
+					
+				}
+			}
+			
+
+			if ( StringUtils.isNotEmpty( rankCutoffOnImportString ) ) {
+
+				if ( skipDefaultRankCutoffOnImport ) {
+					
+					System.err.println( "rank cutoff on import is not valid with skip default q-value cutoff on import" );
+					System.err.println( "" );
+					System.err.println( FOR_HELP_STRING );
+
+					System.exit( PROGRAM_EXIT_CODE_INVALID_INPUT );
+				}
+				
+				try {
+					
+					rankCutoffOnImport = new BigDecimal( rankCutoffOnImportString );
+					
+				} catch ( Exception e ) {
+				
+					System.err.println( "Entered rank cutoff on import is not a decimal number " + rankCutoffOnImportString );
+					System.err.println( "" );
+					System.err.println( FOR_HELP_STRING );
+
+					System.exit( PROGRAM_EXIT_CODE_INVALID_INPUT );
+					
+				}
+			}
+			
+			
+			if ( skipDefaultFDRCutoffOnImport ) {
+				
+				fdrCutoffOnImport = null;
+			};
+
+			if ( skipDefaultRankCutoffOnImport ) {
+				
+				rankCutoffOnImport = null;
+			};
+			
+
+
+			/////////////////////////////////
+			
+			
+			//    List input params to sysout
+			
+			
 	        System.out.println( "Performing Proxl Gen import XML file for parameters:" );
 	        
 	        System.out.println( "output filename: " + outputFilename );
@@ -268,6 +368,21 @@ public class GenImportXMLFromXQuestDataProgram {
 				
 	        }
 	        
+
+        	if ( fdrCutoffOnImport != null ) {
+
+        		//  q-value used to exclude data when importing into Proxl
+        		System.out.println( "FDR filter on import\t" 
+        				+ fdrCutoffOnImport.toString() );
+        	}
+
+        	if ( rankCutoffOnImport != null ) {
+
+        		//  score used to exclude data when importing into Proxl
+        		System.out.println( "Rank filter on import\t" 
+        				+ rankCutoffOnImport.toString() );
+        	}
+	        
 	        
 	        File outputFile = new File( outputFilename );
 	        
@@ -277,6 +392,8 @@ public class GenImportXMLFromXQuestDataProgram {
 					searchName, 
 					proteinNameDecoyPrefix, 
 					resultsPathFile, 
+					fdrCutoffOnImport,
+					rankCutoffOnImport,
 					outputFile );
 
 

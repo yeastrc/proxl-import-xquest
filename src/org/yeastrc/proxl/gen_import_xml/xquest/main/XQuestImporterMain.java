@@ -1,6 +1,7 @@
 package org.yeastrc.proxl.gen_import_xml.xquest.main;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -13,7 +14,7 @@ import org.yeastrc.proxl.gen_import_xml.xquest.objects.XquestDefsFileContents;
 import org.yeastrc.proxl.gen_import_xml.xquest.objects.XquestXprophDefsFileContents;
 import org.yeastrc.proxl.gen_import_xml.xquest.readers.XquestDefsFileReader;
 import org.yeastrc.proxl.gen_import_xml.xquest.readers.XquestXprophDefsFileReader;
-import org.yeastrc.proxl.gen_import_xml.xquest.search_program_annotation_type.AddSearchProgramAndAnnotationTypeRecords;
+import org.yeastrc.proxl.gen_import_xml.xquest.search_program_info_population.AddSearchProgramAndAnnotationTypeRecords;
 import org.yeastrc.proxl_import.api.xml_dto.ConfigurationFile;
 import org.yeastrc.proxl_import.api.xml_dto.ConfigurationFiles;
 import org.yeastrc.proxl_import.api.xml_dto.DecoyLabel;
@@ -49,7 +50,11 @@ public class XQuestImporterMain {
 			String proteinNameDecoyPrefix,
 			
 			File resultsPathFile,
-			
+
+			BigDecimal fdrCutoffOnImport,
+
+			BigDecimal rankCutoffOnImport,
+
 			File outputFile
 			) throws Exception {
 		
@@ -84,7 +89,7 @@ public class XQuestImporterMain {
 
 
 		AddSearchProgramAndAnnotationTypeRecords.getInstance()
-		.addSearchProgramAndAnnotationTypeRecords( proxlInputRoot, xquestVersion );
+		.addSearchProgramAndAnnotationTypeRecords( proxlInputRoot, xquestVersion, fdrCutoffOnImport, rankCutoffOnImport );
 		
 		
 		File fastaFileObj = xquestDefsFileContents.getFastaFile();

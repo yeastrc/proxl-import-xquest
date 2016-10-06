@@ -1,11 +1,16 @@
-package org.yeastrc.proxl.gen_import_xml.xquest.search_program_annotation_type;
+package org.yeastrc.proxl.gen_import_xml.xquest.search_program_info_population;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 //import org.apache.log4j.Logger;
 
-import org.yeastrc.proxl.gen_import_xml.xquest.annotation_default_visible.AddDefaultVisibleAnnotations;
-import org.yeastrc.proxl.gen_import_xml.xquest.annotation_sort_order.AddAnnotationSortOrder;
+
+
+
+
+
+
 import org.yeastrc.proxl.gen_import_xml.xquest.constants.AnnotationType_Constants;
 import org.yeastrc.proxl.gen_import_xml.xquest.constants.SearchProgramConstants;
 import org.yeastrc.proxl_import.api.xml_dto.DescriptivePsmAnnotationType;
@@ -38,7 +43,12 @@ public class AddSearchProgramAndAnnotationTypeRecords {
 	}
 	
 	
-	public void addSearchProgramAndAnnotationTypeRecords( ProxlInput proxlInputRoot, String xquestVersion ) {
+	public void addSearchProgramAndAnnotationTypeRecords( 
+			
+			ProxlInput proxlInputRoot, 
+			String xquestVersion, 
+			BigDecimal fdrCutoffOnImport, 
+			BigDecimal rankCutoffOnImport ) {
 		
 		SearchProgramInfo searchProgramInfo = new SearchProgramInfo();
 		proxlInputRoot.setSearchProgramInfo( searchProgramInfo );
@@ -62,6 +72,8 @@ public class AddSearchProgramAndAnnotationTypeRecords {
 		AddDefaultVisibleAnnotations.getInstance().addDefaultVisibleAnnotations( searchProgramInfo );
 		
 		AddAnnotationSortOrder.getInstance().addAnnotationSortOrder( searchProgramInfo );
+		
+		AddCutoffOnImport.getInstance().addCutoffOnImport( fdrCutoffOnImport, rankCutoffOnImport, searchProgramInfo );
 		
 	}
 	

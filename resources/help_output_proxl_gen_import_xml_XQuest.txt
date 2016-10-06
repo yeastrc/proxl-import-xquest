@@ -23,4 +23,21 @@ Parameters:
 								
 	--decoy-prefix= : [Optional] : The prefix to use to identify decoy matches based on protein names. If not
 								   set, the value for "decoy_filter" in the XQuest configuration file will be used.
-								   
+		
+		
+	--fdr-cutoff-on-import= : [Optional] : Specifies the value for the 'FDR' that will be used for the cutoff 
+										for which data will be included during the import to Proxl.  
+										A default of 0.05 is used if a value is not specified. 
+
+	--skip-default-fdr-cutoff-on-import : [Optional] : Specifies that the default value for the 'FDR' 
+										will NOT be used for the cutoff for which data will be
+										included during the import to Proxl.    
+
+
+	--rank-cutoff-on-import= : [Optional] : Specifies the value for the 'rank' that will be used for the cutoff 
+										for which data will be included during the import to Proxl.  
+										A default of one (1) is used if a value is not specified. 
+
+	--skip-default-rank-cutoff-on-import : [Optional] : Specifies that the default value for the 'rank' 
+										will NOT be used for the cutoff for which data will be
+										included during the import to Proxl.    

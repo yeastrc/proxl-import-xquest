@@ -1,4 +1,4 @@
-package org.yeastrc.proxl.gen_import_xml.xquest.annotation_sort_order;
+package org.yeastrc.proxl.gen_import_xml.xquest.search_program_info_population;
 
 import java.util.List;
 
