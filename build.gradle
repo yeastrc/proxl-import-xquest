@@ -1,0 +1,59 @@
+/*
+    Build executable jar file with gradle shadowJar
+    More info at: https://imperceptiblethoughts.com/shadow/
+    
+    Requires Gradle 5+
+ */
+
+plugins {
+    id 'com.github.johnrengelman.shadow' version '5.0.0'
+}
+
+apply plugin: 'java'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+
+    maven {
+        url 'https://raw.github.com/yeastrc/proxl-import-api/repository/'
+    }
+
+    maven {
+        url 'https://raw.github.com/yeastrc/java-fasta-utils/repository/'
+    }
+
+}
+
+dependencies {
+    compile 'org.yeastrc:proxl-import-api:1.9.1'
+    compile 'org.yeastrc:yrc-fasta-utils:2.0.2'
+    compile 'info.picocli:picocli:4.0.0-alpha-1'
+    compile 'org.apache.commons:commons-lang3:3.2.1'
+    compile 'log4j:log4j:1.2.17'
+    compile fileTree(dir: 'lib', include: ['*.jar'])
+}
+
+processResources {
+    from ('src/main/java') {
+        include '**/*.txt'
+    }
+    from ('resources') {
+        include 'log4j.xml'
+    }
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'org.yeastrc.proxl.xml.xquest.program.MainProgram'
+    }
+}
+
+shadowJar {
+    baseName = 'xquest2ProxlXML'
+    classifier = null
+    version = null
+}
