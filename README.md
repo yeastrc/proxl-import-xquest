@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.com/yeastrc/proxl-import-xquest.svg?branch=master)](https://travis-ci.com/yeastrc/proxl-import-xquest)
+
+
 XQuest to Proxl XML Converter
 =====================================================
 
