@@ -63,7 +63,11 @@ public class MainProgram implements Runnable {
 			System.out.println( "--------------------------------------" );
 			System.out.println( "" );
 
-	        System.out.println( "Completed Proxl Gen XML for Import for parameters:" );
+	        System.out.println( "Completed Proxl XML." );
+
+			System.err.print( "Validating Proxl XML... " );
+			ProxlXMLValidator.validateProxlXML(outFile);
+			System.err.println( "Done." );
 
 			successfulGenImportXMLFile = true;
 			
@@ -71,10 +75,7 @@ public class MainProgram implements Runnable {
 			
 		} catch ( Exception e ) {
 			
-			System.out.println( "Exception in processing" );
 			System.err.println( "Exception in processing" );
-			
-			e.printStackTrace( System.out );
 			e.printStackTrace( System.err );
 
 			System.exit(1);
